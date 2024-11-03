@@ -5,6 +5,7 @@
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<InvariantGlobalization>false</InvariantGlobalization>
+		<AssemblyName>$(MSBuildProjectName).WebAPI</AssemblyName>
 	</PropertyGroup>
 
 	<ItemGroup>
