@@ -2,6 +2,8 @@
 using HRSystem.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using HRSystem.WebAPI.Extensions;
+using Serilog;
+using HRSystem.Application.Mapping;
 
 namespace HRSystem
 {
@@ -20,13 +22,19 @@ namespace HRSystem
             //configuration db context 
             builder.Services.AddDbContext<HRSystemDBContext>(
                             option => option.UseSqlServer(builder.Configuration["ConnectionStrings:HRSystemDb"]));
-
+            // add serilog service
+            Log.Logger = new LoggerConfiguration()
+                        .MinimumLevel.Warning()
+                        .WriteTo.File("Files\\logs\\ExeptionFile.txt", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
             //Add auto mapper here bro
-            builder.Services
-                    .AddAutoMapper(AppDomain.CurrentDomain
-                    .GetAssemblies());
+            builder.Services.AddAutoMapper(cfg => cfg.AddProfile<MappingProfile>());
+
+
             // register service employee
             builder.Services.AddEmployeeServices();
+            // register service Department
+            builder.Services.AddDepartmentServices();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

@@ -15,6 +15,8 @@ namespace HRSystem.Application.Mapping
         {
             CreateMap<Employee, EmployeeDto>().ReverseMap();
             CreateMap<Department, DepartmentDto>().ReverseMap();
+            CreateMap<DepartmentDto, Department>();
+            CreateMap<SalaryTiers, SalaryTiersDto>().ReverseMap();
         }
     }
 }

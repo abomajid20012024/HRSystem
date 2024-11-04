@@ -23,6 +23,8 @@ namespace HRSystem.Domain.Entities
         public DateTime CreateAt { get; set; } = DateTime.UtcNow;
         public Guid DepartmentId { get; set; }
         public Department? Department { get; set; }
+        public Guid SalaryTiersId { get; set; }
+        public SalaryTiers? SalaryTiers { get; set; }
         public Employee()
         {
             EmployeeId = Guid.NewGuid();
