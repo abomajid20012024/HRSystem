@@ -13,6 +13,7 @@ namespace HRSystem.WebAPI.Extensions
             services.AddScoped<AddDepartmentCommand>();
             services.AddScoped<UpdateDepartmentCommand>();
             services.AddScoped<GetDepartmentQuery>();
+            services.AddScoped<DeleteDepartmentCommand>();
             services.AddScoped<IDepartmentService, DepartmentRepository>();
 
             return services;

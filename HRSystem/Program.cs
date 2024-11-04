@@ -26,7 +26,8 @@ namespace HRSystem
             Log.Logger = new LoggerConfiguration()
                         .MinimumLevel.Warning()
                         .WriteTo.File("Files\\logs\\ExeptionFile.txt", rollingInterval: RollingInterval.Day)
-    .CreateLogger();
+                        .CreateLogger();
+            builder.Host.UseSerilog();//Register serilog
             //Add auto mapper here bro
             builder.Services.AddAutoMapper(cfg => cfg.AddProfile<MappingProfile>());
 

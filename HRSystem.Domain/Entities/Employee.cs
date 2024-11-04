@@ -25,6 +25,8 @@ namespace HRSystem.Domain.Entities
         public Department? Department { get; set; }
         public Guid SalaryTiersId { get; set; }
         public SalaryTiers? SalaryTiers { get; set; }
+        public bool IsActive { get; set; } = true;
+
         public Employee()
         {
             EmployeeId = Guid.NewGuid();

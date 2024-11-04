@@ -16,6 +16,7 @@ namespace HRSystem.Domain.Entities
         public ICollection<Employee>? Employees { get; set; }
         [NotMapped]
         public int CountEmployee => Employees?.Count ?? 0;
+        public bool IsActive { get; set; } = true;
         public Department()
         {
             DepartmentId = Guid.NewGuid();

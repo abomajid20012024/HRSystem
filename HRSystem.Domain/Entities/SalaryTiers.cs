@@ -13,6 +13,8 @@ namespace HRSystem.Domain.Entities
         public float BaseSalary { get; set; }
         public float Bonus { get; set; }
         public ICollection<Employee> Employees { get; set; }
+        public bool IsActive { get; set; } = true;
+
         public SalaryTiers()
         {
             SalaryTiersId = Guid.NewGuid();

@@ -6,12 +6,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HRSystem.Application.DTOs
+namespace HRSystem.Application.DTOs.ShowDto
 {
     public class DepartmentDto
     {
-        [Required(ErrorMessage = "Please input name department")]
+        public Guid DepartmentId { get; set; }
         public required string DepartmetnName { get; set; }
+        public ICollection<Employee?>? Employees { get; set; }
+        public int CountEmployee => Employees?.Count ?? 0;
+
 
     }
 }

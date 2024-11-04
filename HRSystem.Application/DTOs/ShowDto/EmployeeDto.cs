@@ -4,9 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HRSystem.Application.DTOs
+namespace HRSystem.Application.DTOs.ShowDto
 {
-    public class SalaryTiersDto
+    public class EmployeeDto
     {
+        public EmployeeDto()
+        {
+
+        }
     }
 }
