@@ -1,7 +1,7 @@
 ﻿using HRSystem.Application.DTOs;
-using HRSystem.Application.Interfaces;
+using HRSystem.Application.DTOs.Department;
+using HRSystem.Application.Services.IServices;
 using HRSystem.Domain.Entities;
-using HRSystem.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +21,7 @@ namespace HRSystem.Application.UseCases.Department
         {
             this.departmentService = departmentService;
         }
-        public Task<bool> Excute(Domain.Entities.Department departmen)
+        public Task<bool> Excute(DepartmentCreateDto departmen)
         {
             return departmentService.AddDepartmentAsync(departmen);
         }

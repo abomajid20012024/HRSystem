@@ -1,6 +1,8 @@
 ﻿using HRSystem.Application.UseCases.Employee;
-using HRSystem.Domain.Interfaces;
+using HRSystem.Application.IRepository;
 using HRSystem.Infrastructure.Repositories;
+using HRSystem.Application.Services.IServices;
+using HRSystem.Application.Services;
 
 namespace HRSystem.WebAPI.Extensions
 {
@@ -11,7 +13,9 @@ namespace HRSystem.WebAPI.Extensions
             services.AddScoped<AddEmployeeCommand>();
             services.AddScoped<UpdateEmployeeCommand>();
             services.AddScoped<GetEmployeeQuery>();
+            services.AddScoped<DeleteEmployeeCommand>();
             services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+            services.AddScoped<IEmployeeService, EmployeeService>();
 
             return services;
         }

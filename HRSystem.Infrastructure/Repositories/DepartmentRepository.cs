@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
-using HRSystem.Application.DTOs.ShowDto;
-using HRSystem.Application.Interfaces;
+
 using HRSystem.Domain.Entities;
-using HRSystem.Domain.Interfaces;
+using HRSystem.Infrastructure.Repositories.IRepository;
 using HRSystem.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -14,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace HRSystem.Infrastructure.Repositories
 {
-    public class DepartmentRepository : IDepartmentService
+    public class DepartmentRepository : IDepartmentRepository
     {
         private readonly HRSystemDBContext _context;
         private readonly IMapper mapper;
@@ -57,7 +56,7 @@ namespace HRSystem.Infrastructure.Repositories
             }
         }
 
-        public async Task<bool> DeleteDepartment(Guid idDepartment)
+        public async Task<bool> DeleteDepartmentAsync(Guid idDepartment)
         {
             try
             {
@@ -80,7 +79,9 @@ namespace HRSystem.Infrastructure.Repositories
             }
         }
 
-        public async Task<bool> DeleteDepartmentSoft(Guid idDepartment)
+
+
+        public async Task<bool> DeleteDepartmentSoftAsync(Guid idDepartment)
         {
             try
             {
@@ -103,7 +104,7 @@ namespace HRSystem.Infrastructure.Repositories
             }
         }
 
-        public async Task<IEnumerable<DepartmentDto>> GetAllDepartmentsAsync(int pageNumber, int pageSize)
+        public async Task<IEnumerable<Department>> GetAllDepartmentsAsync(int pageNumber, int pageSize)
         {
             try
             {
@@ -115,31 +116,26 @@ namespace HRSystem.Infrastructure.Repositories
                                                     .Skip(pageSize * (pageNumber - 1))
                                                     .Take(pageSize)
                                                     .OrderBy(g => g.DepartmetnName)
-                                                    .Select(d => new DepartmentDto
-                                                    {
-                                                        DepartmentId = d.DepartmentId,
-                                                        DepartmetnName = d.DepartmetnName
-                                                    })
                                                     .ToListAsync();
                     if (departments.Count > 0)
                     {
-                        return mapper.Map<IEnumerable<DepartmentDto>>(departments);
+                        return departments;
                     }
                     else
                     {
-                        return Enumerable.Empty<DepartmentDto>();
+                        return Enumerable.Empty<Department>();
                     }
 
                 }
                 else
                 {
-                    return Enumerable.Empty<DepartmentDto>();
+                    return Enumerable.Empty<Department>();
                 }
             }
             catch (Exception ex)
             {
                 logger.LogCritical(ex, "Error ocurs in DepartmentRepository in Function GetDepartments");
-                return Enumerable.Empty<DepartmentDto>();
+                return Enumerable.Empty<Department>();
 
             }
         }
@@ -168,7 +164,7 @@ namespace HRSystem.Infrastructure.Repositories
             }
         }
 
-        public async Task<bool> UpdateDepartment(Department department)
+        public async Task<bool> UpdateDepartmentAsync(Department department)
         {
             try
             {
@@ -196,5 +192,6 @@ namespace HRSystem.Infrastructure.Repositories
                 return false;
             }
         }
+
     }
 }

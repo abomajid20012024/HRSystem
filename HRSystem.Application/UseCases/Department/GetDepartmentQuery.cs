@@ -1,5 +1,5 @@
-﻿using HRSystem.Application.DTOs.ShowDto;
-using HRSystem.Application.Interfaces;
+﻿using HRSystem.Application.DTOs.Department;
+using HRSystem.Application.Services.IServices;
 using HRSystem.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -26,7 +26,7 @@ namespace HRSystem.Application.UseCases.Department
         }
 
         // Optional: Method to get a single department by ID
-        public Task<Domain.Entities.Department> GetDepartmentByIdAsync(Guid departmentId)
+        public Task<DepartmentDto> GetDepartmentByIdAsync(Guid departmentId)
         {
             return _departmentService.GetDepartmentByIdAsync(departmentId);
         }

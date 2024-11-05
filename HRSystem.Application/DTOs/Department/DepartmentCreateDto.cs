@@ -5,12 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HRSystem.Application.DTOs.UpdateDto
+namespace HRSystem.Application.DTOs.Department
 {
-    public class DepartmentUpdateDto
+    public class DepartmentCreateDto
     {
-        public Guid DepartmentId { get; set; }
-        [Required(ErrorMessage = "Please input new name department for update")]
+        [Required(ErrorMessage = "Please input Department name for create a new department")]
         public required string DepartmetnName { get; set; }
     }
 }

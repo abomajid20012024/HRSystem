@@ -1,6 +1,4 @@
-﻿using HRSystem.Application.DTOs.ShowDto;
-using HRSystem.Application.Interfaces;
-using HRSystem.Domain.Interfaces;
+﻿using HRSystem.Application.Services.IServices;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -1,9 +1,9 @@
-
 using HRSystem.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using HRSystem.WebAPI.Extensions;
 using Serilog;
 using HRSystem.Application.Mapping;
+using System.Reflection;
 
 namespace HRSystem
 {
@@ -13,45 +13,53 @@ namespace HRSystem
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
-
-            builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
-            //configuration db context 
-            builder.Services.AddDbContext<HRSystemDBContext>(
-                            option => option.UseSqlServer(builder.Configuration["ConnectionStrings:HRSystemDb"]));
-            // add serilog service
+            // Configure Serilog for logging
             Log.Logger = new LoggerConfiguration()
-                        .MinimumLevel.Warning()
-                        .WriteTo.File("Files\\logs\\ExeptionFile.txt", rollingInterval: RollingInterval.Day)
-                        .CreateLogger();
-            builder.Host.UseSerilog();//Register serilog
-            //Add auto mapper here bro
+                            .MinimumLevel.Warning()
+                            .WriteTo.File("Files/logs/ExceptionFile.txt", rollingInterval: RollingInterval.Day)
+                            .CreateLogger();
+            builder.Host.UseSerilog(); // Register Serilog
+
+            // Add services to the container
+            builder.Services.AddControllers();
+
+            // Enable Swagger with XML comments for API documentation
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen(options =>
+            {
+                // Configure XML comments path for Swagger
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                options.IncludeXmlComments(xmlPath);
+            });
+
+            // Configure database context with SQL Server
+            builder.Services.AddDbContext<HRSystemDBContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("HRSystemDb")));
+
+            // Configure AutoMapper with MappingProfile
             builder.Services.AddAutoMapper(cfg => cfg.AddProfile<MappingProfile>());
 
-
-            // register service employee
+            // Register custom services for Dependency Injection
             builder.Services.AddEmployeeServices();
-            // register service Department
             builder.Services.AddDepartmentServices();
+            builder.Services.AddSalaryTiersServices();
+
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
+            // Configure the HTTP request pipeline
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
-                app.UseSwaggerUI();
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "HRSystem API v1");
+                });
             }
 
             app.UseHttpsRedirection();
-
             app.UseAuthorization();
-
-
             app.MapControllers();
-
             app.Run();
         }
     }

@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using HRSystem.Application.DTOs.CreateDto;
-using HRSystem.Application.DTOs.ShowDto;
-using HRSystem.Application.DTOs.UpdateDto;
+using HRSystem.Application.DTOs.Department;
+using HRSystem.Application.DTOs.Employee;
+using HRSystem.Application.DTOs.SalaryTiers;
 using HRSystem.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -15,11 +15,19 @@ namespace HRSystem.Application.Mapping
     {
         public MappingProfile()
         {
-            CreateMap<Employee, EmployeeDto>().ReverseMap();
             CreateMap<DepartmentCreateDto, Department>().ReverseMap();
             CreateMap<DepartmentUpdateDto, Department>().ReverseMap();
             CreateMap<Department, DepartmentDto>().ReverseMap();
+            //mapping employee
+            CreateMap<Employee, EmployeeDto>().ReverseMap();
+            CreateMap<Employee, EmployeeUpdateDto>().ReverseMap();
+            CreateMap<Employee, EmployeeCreateDto>().ReverseMap();
+            // mapping SalaryTiers
             CreateMap<SalaryTiers, SalaryTiersDto>().ReverseMap();
+            CreateMap<SalaryTiers, SalaryTiersCreateDto>().ReverseMap();
+            CreateMap<SalaryTiers, SalaryTiersUpdateDto>().ReverseMap();
+
+
         }
     }
 }

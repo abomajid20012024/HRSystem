@@ -1,7 +1,7 @@
-﻿using HRSystem.Application.Interfaces;
+﻿using HRSystem.Application.Services;
+using HRSystem.Application.Services.IServices;
 using HRSystem.Application.UseCases.Department;
-using HRSystem.Application.UseCases.Employee;
-using HRSystem.Domain.Interfaces;
+using HRSystem.Infrastructure.Repositories.IRepository;
 using HRSystem.Infrastructure.Repositories;
 
 namespace HRSystem.WebAPI.Extensions
@@ -14,7 +14,8 @@ namespace HRSystem.WebAPI.Extensions
             services.AddScoped<UpdateDepartmentCommand>();
             services.AddScoped<GetDepartmentQuery>();
             services.AddScoped<DeleteDepartmentCommand>();
-            services.AddScoped<IDepartmentService, DepartmentRepository>();
+            services.AddScoped<IDepartmentRepository, DepartmentRepository>();
+            services.AddScoped<IDepartmentService, DepartmentService>();
 
             return services;
         }

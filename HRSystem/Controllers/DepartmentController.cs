@@ -1,26 +1,56 @@
-﻿using AutoMapper;
-using HRSystem.Application.DTOs.CreateDto;
-using HRSystem.Application.DTOs.ShowDto;
-using HRSystem.Application.DTOs.UpdateDto;
-using HRSystem.Application.UseCases.Department;
-using HRSystem.Domain.Entities;
-using HRSystem.Infrastructure.Repositories;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-
-namespace HRSystem.WebAPI.Controllers
+﻿namespace HRSystem.WebAPI.Controllers
 {
+    using AutoMapper;
+    using HRSystem.Application.DTOs.Department;
+    using HRSystem.Application.UseCases.Department;
+    using Microsoft.AspNetCore.Mvc;
+
+    /// <summary>
+    /// Defines the <see cref="DepartmentController" />
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class DepartmentController : ControllerBase
     {
+        /// <summary>
+        /// Defines the AddDepartmentCommand
+        /// </summary>
         private readonly AddDepartmentCommand AddDepartmentCommand;
+
+        /// <summary>
+        /// Defines the getDepartmentQuery
+        /// </summary>
         private readonly GetDepartmentQuery getDepartmentQuery;
+
+        /// <summary>
+        /// Defines the deleteDepartmentCommand
+        /// </summary>
         private readonly DeleteDepartmentCommand deleteDepartmentCommand;
+
+        /// <summary>
+        /// Defines the updateDepartmentCommand
+        /// </summary>
         private readonly UpdateDepartmentCommand updateDepartmentCommand;
+
+        /// <summary>
+        /// Defines the logger
+        /// </summary>
         private readonly ILogger<DepartmentController> logger;
+
+        /// <summary>
+        /// Defines the mapper
+        /// </summary>
         private readonly IMapper mapper;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DepartmentController"/> class.
+        /// </summary>
+        /// <param name="departmentCommand">The departmentCommand<see cref="AddDepartmentCommand"/></param>
+        /// <param name="getDepartmentQuery">The getDepartmentQuery<see cref="GetDepartmentQuery"/></param>
+        /// <param name="deleteDepartmentCommand">The deleteDepartmentCommand<see cref="DeleteDepartmentCommand"/></param>
+        /// <param name="updateDepartmentCommand">The updateDepartmentCommand<see cref="UpdateDepartmentCommand"/></param>
+        /// <param name="logger">The logger<see cref="ILogger{DepartmentController}"/></param>
+        /// <param name="mapper">The mapper<see cref="IMapper"/></param>
         public DepartmentController
             (
                 AddDepartmentCommand departmentCommand,
@@ -38,6 +68,12 @@ namespace HRSystem.WebAPI.Controllers
             this.logger = logger;
             this.mapper = mapper;
         }
+
+        /// <summary>
+        /// The Create
+        /// </summary>
+        /// <param name="departmentDto">The departmentDto<see cref="DepartmentCreateDto"/></param>
+        /// <returns>The <see cref="Task{ActionResult}"/></returns>
         [HttpPost]
         public async Task<ActionResult> Create([FromBody] DepartmentCreateDto departmentDto)
         {
@@ -45,7 +81,7 @@ namespace HRSystem.WebAPI.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var departmentCheck = await AddDepartmentCommand.Excute(mapper.Map<Department>(departmentDto));
+                    var departmentCheck = await AddDepartmentCommand.Excute(departmentDto);
                     if (departmentCheck)
                     {
                         return Ok();
@@ -55,10 +91,8 @@ namespace HRSystem.WebAPI.Controllers
                         logger.LogCritical("Error ocurs in Department Controller in action Craete and thie modelStatae is valid okey");
 
                         return BadRequest();
-
                     }
                 }
-
                 else
                 {
                     return BadRequest();
@@ -70,13 +104,17 @@ namespace HRSystem.WebAPI.Controllers
                 return BadRequest();
             }
         }
+
+        /// <summary>
+        /// The GetDepartment
+        /// </summary>
+        /// <param name="id">The id<see cref="Guid"/></param>
+        /// <returns>The <see cref="Task{ActionResult}"/></returns>
         [HttpGet("{id}")]
         public async Task<ActionResult> GetDepartment(Guid id)
         {
             try
             {
-
-
                 var departmentCheck = await getDepartmentQuery.GetDepartmentByIdAsync(id);
                 if (departmentCheck is not null)
                 {
@@ -86,8 +124,6 @@ namespace HRSystem.WebAPI.Controllers
                 {
                     return NotFound("Not found this department please check if correct id");
                 }
-
-
             }
             catch (Exception ex)
             {
@@ -95,6 +131,13 @@ namespace HRSystem.WebAPI.Controllers
                 return BadRequest();
             }
         }
+
+        /// <summary>
+        /// The GetDepartments
+        /// </summary>
+        /// <param name="pageNumber">The pageNumber<see cref="int"/></param>
+        /// <param name="pageSize">The pageSize<see cref="int"/></param>
+        /// <returns>The <see cref="Task{ActionResult}"/></returns>
         [HttpGet()]
         public async Task<ActionResult> GetDepartments([FromQuery] int pageNumber, [FromQuery] int pageSize)
         {
@@ -116,6 +159,12 @@ namespace HRSystem.WebAPI.Controllers
                 return BadRequest();
             }
         }
+
+        /// <summary>
+        /// The DeleteDepartment
+        /// </summary>
+        /// <param name="id">The id<see cref="Guid"/></param>
+        /// <returns>The <see cref="Task{ActionResult}"/></returns>
         [HttpDelete("delete/{id}")]
         public async Task<ActionResult> DeleteDepartment(Guid id)
         {
@@ -137,7 +186,13 @@ namespace HRSystem.WebAPI.Controllers
                 return BadRequest();
             }
         }
-        [HttpPost("delete/{id}")]
+
+        /// <summary>
+        /// The DeleteDepartmentSoftDelete where put activate is false
+        /// </summary>
+        /// <param name="id">The id<see cref="Guid"/></param>
+        /// <returns>The <see cref="Task{ActionResult}"/></returns>
+        [HttpPut("delete/{id}")]
         public async Task<ActionResult> DeleteDepartmentSoftDelete(Guid id)
         {
             try
@@ -158,6 +213,12 @@ namespace HRSystem.WebAPI.Controllers
                 return BadRequest();
             }
         }
+
+        /// <summary>
+        /// The UpdateDepartment
+        /// </summary>
+        /// <param name="departmentUpdateDto">The departmentUpdateDto<see cref="DepartmentUpdateDto"/></param>
+        /// <returns>The <see cref="Task{ActionResult}"/></returns>
         [HttpPatch("update")]
         public async Task<ActionResult> UpdateDepartment(DepartmentUpdateDto departmentUpdateDto)
         {
@@ -179,7 +240,6 @@ namespace HRSystem.WebAPI.Controllers
                 {
                     return BadRequest("Please input correct data");
                 }
-
             }
             catch (Exception ex)
             {
@@ -188,8 +248,4 @@ namespace HRSystem.WebAPI.Controllers
             }
         }
     }
-
 }
-
-
-

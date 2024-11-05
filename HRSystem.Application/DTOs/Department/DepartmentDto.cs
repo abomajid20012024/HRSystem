@@ -1,15 +1,17 @@
-﻿using System;
+﻿using HRSystem.Domain.Entities;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HRSystem.Application.DTOs.CreateDto
+
+namespace HRSystem.Application.DTOs.Department
 {
-    public class DepartmentCreateDto
+    public class DepartmentDto
     {
-        [Required(ErrorMessage = "Please input Department name for create a new department")]
+        public Guid DepartmentId { get; set; }
         public required string DepartmetnName { get; set; }
     }
 }

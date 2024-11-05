@@ -1,20 +1,16 @@
-﻿using HRSystem.Domain.Entities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HRSystem.Application.DTOs.ShowDto
+namespace HRSystem.Application.DTOs.Department
 {
-    public class DepartmentDto
+    public class DepartmentUpdateDto
     {
         public Guid DepartmentId { get; set; }
+        [Required(ErrorMessage = "Please input new name department for update")]
         public required string DepartmetnName { get; set; }
-        public ICollection<Employee?>? Employees { get; set; }
-        public int CountEmployee => Employees?.Count ?? 0;
-
-
     }
 }

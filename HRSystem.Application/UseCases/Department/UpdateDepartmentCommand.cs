@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using HRSystem.Application.DTOs.UpdateDto;
-using HRSystem.Application.Interfaces;
+using HRSystem.Application.DTOs.Department;
+using HRSystem.Application.Services.IServices;
 using HRSystem.Domain.Entities;
 using Microsoft.Extensions.Logging;
 using System;
@@ -37,7 +37,7 @@ namespace HRSystem.Application.UseCases.Department
                     return await Task.FromResult(false);
 
                 }
-                return await departmentService.UpdateDepartment(mapper.Map<Domain.Entities.Department>(departmentUpdateDto));
+                return await departmentService.UpdateDepartment(departmentUpdateDto);
             }
             catch (Exception ex)
             {
