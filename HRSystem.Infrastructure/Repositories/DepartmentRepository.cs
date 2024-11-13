@@ -1,15 +1,9 @@
 ﻿using AutoMapper;
-
 using HRSystem.Domain.Entities;
-using HRSystem.Infrastructure.Repositories.IRepository;
 using HRSystem.Infrastructure.Data;
+using HRSystem.Infrastructure.Repositories.IRepository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HRSystem.Infrastructure.Repositories
 {
@@ -31,6 +25,7 @@ namespace HRSystem.Infrastructure.Repositories
             this.mapper = mapper;
             this.logger = logger;
         }
+
         public async Task<bool> AddDepartmentAsync(Department department)
         {
             try
@@ -79,8 +74,6 @@ namespace HRSystem.Infrastructure.Repositories
             }
         }
 
-
-
         public async Task<bool> DeleteDepartmentSoftAsync(Guid idDepartment)
         {
             try
@@ -125,7 +118,6 @@ namespace HRSystem.Infrastructure.Repositories
                     {
                         return Enumerable.Empty<Department>();
                     }
-
                 }
                 else
                 {
@@ -136,7 +128,6 @@ namespace HRSystem.Infrastructure.Repositories
             {
                 logger.LogCritical(ex, "Error ocurs in DepartmentRepository in Function GetDepartments");
                 return Enumerable.Empty<Department>();
-
             }
         }
 
@@ -148,7 +139,6 @@ namespace HRSystem.Infrastructure.Repositories
                 if (item is not null)
                 {
                     return item;
-
                 }
                 else
                 {
@@ -159,8 +149,6 @@ namespace HRSystem.Infrastructure.Repositories
             {
                 logger.LogCritical(ex, "Error ocurs in DepartmentRepository in Function GetDepartmentByIdAsync");
                 return null;
-
-
             }
         }
 
@@ -176,8 +164,6 @@ namespace HRSystem.Infrastructure.Repositories
                         item.DepartmetnName = department.DepartmetnName;
                         await _context.SaveChangesAsync();
                         return true;
-
-
                     }
                     else
                     {
@@ -192,6 +178,5 @@ namespace HRSystem.Infrastructure.Repositories
                 return false;
             }
         }
-
     }
 }

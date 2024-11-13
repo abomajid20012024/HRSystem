@@ -3,6 +3,7 @@ using HRSystem.Application.DTOs.Employee;
 using HRSystem.Application.IRepository;
 using HRSystem.Application.Services.IServices;
 using HRSystem.Domain.Entities;
+using HRSystem.Shard;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -26,19 +27,20 @@ namespace HRSystem.Application.Services
             _logger = logger;
         }
 
-        public async Task<IEnumerable<EmployeeDto>> GetAllEmployiesAsync(int pageNumber, int pageSize)
+        public async Task<(IEnumerable<EmployeeDto?>, PaginationMetaData?)> GetAllEmployiesAsync(int pageNumber, int pageSize)
         {
             if (pageNumber <= 0 || pageSize <= 0)
             {
                 _logger.LogWarning("Invalid pagination parameters");
-                return Enumerable.Empty<EmployeeDto>();
+                return (Enumerable.Empty<EmployeeDto>(), null);
             }
-            var items = _mapper.Map<List<EmployeeDto>>(await _employeeRepository.GetAllEmployeesAsync(pageNumber, pageSize));
+            var (items, pagination) = await _employeeRepository.GetAllEmployeesAsync(pageNumber, pageSize);
+            var itemsMapper = _mapper.Map<List<EmployeeDto>>(items);
             if (items is not null)
             {
-                return items;
+                return (itemsMapper, pagination);
             }
-            else { return Enumerable.Empty<EmployeeDto>(); }
+            else { return (Enumerable.Empty<EmployeeDto>(), null); }
         }
 
         public async Task<EmployeeDto> GetEmployeeByIdAsync(Guid id)
@@ -59,6 +61,28 @@ namespace HRSystem.Application.Services
                 return null;
             }
         }
+
+        public async Task<IEnumerable<EmployeeDto>> GetAllEmployiesByNameAsync(string name)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(name))
+                {
+                    var employees = await _employeeRepository.GetEmployeeByNameAsync(name);
+
+                    var items = _mapper.Map<IEnumerable<EmployeeDto>>(employees);
+
+                    return items;
+                }
+                return Enumerable.Empty<EmployeeDto>();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return Enumerable.Empty<EmployeeDto>();
+            }
+        }
+
 
         public async Task<bool> AddEmployeeAsync(EmployeeCreateDto employeeCreate)
         {
@@ -123,7 +147,5 @@ namespace HRSystem.Application.Services
 
             return await _employeeRepository.DeleteEmployeeSoftAsync(idEmployee);
         }
-
-
     }
 }

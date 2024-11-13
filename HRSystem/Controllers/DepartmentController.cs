@@ -3,6 +3,7 @@
     using AutoMapper;
     using HRSystem.Application.DTOs.Department;
     using HRSystem.Application.UseCases.Department;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
 
     /// <summary>
@@ -10,6 +11,7 @@
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "User")]
     public class DepartmentController : ControllerBase
     {
         /// <summary>

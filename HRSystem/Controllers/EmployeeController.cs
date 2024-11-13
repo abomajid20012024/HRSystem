@@ -2,8 +2,10 @@
 {
     using HRSystem.Application.DTOs.Employee;
     using HRSystem.Application.UseCases.Employee;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
+    using Microsoft.IdentityModel.Tokens;
     using System;
     using System.Threading.Tasks;
 
@@ -12,6 +14,7 @@
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "User")]
     public class EmployeeController : ControllerBase
     {
         /// <summary>
@@ -23,6 +26,8 @@
         /// Defines the _getEmployeeQuery
         /// </summary>
         private readonly GetEmployeeQuery _getEmployeeQuery;
+
+        private readonly GetEmployeeByNameCommand getEmployeeByNameCommand;
 
         /// <summary>
         /// Defines the _deleteEmployeeCommand
@@ -50,6 +55,7 @@
         public EmployeeController(
             AddEmployeeCommand addEmployeeCommand,
             GetEmployeeQuery getEmployeeQuery,
+            GetEmployeeByNameCommand getEmployeeByNameCommand,
             DeleteEmployeeCommand deleteEmployeeCommand,
             UpdateEmployeeCommand updateEmployeeCommand,
             ILogger<EmployeeController> logger
@@ -57,6 +63,7 @@
         {
             _addEmployeeCommand = addEmployeeCommand;
             _getEmployeeQuery = getEmployeeQuery;
+            this.getEmployeeByNameCommand = getEmployeeByNameCommand;
             _deleteEmployeeCommand = deleteEmployeeCommand;
             _updateEmployeeCommand = updateEmployeeCommand;
             _logger = logger;
@@ -67,7 +74,7 @@
         /// </summary>
         /// <param name="employeeDto">The employeeDto<see cref="EmployeeCreateDto"/></param>
         /// <returns>The <see cref="Task{ActionResult}"/></returns>
-        [HttpPost]
+        [HttpPost("create")]
         public async Task<ActionResult> CreateEmployee([FromBody] EmployeeCreateDto employeeDto)
         {
             try
@@ -85,11 +92,27 @@
                 return BadRequest();
             }
         }
+
         /// <summary>
         /// The GetEmployee
         /// </summary>
         /// <param name="id">The id<see cref="Guid"/></param>
         /// <returns>The <see cref="Task{ActionResult}"/></returns>
+        [HttpGet("search")]
+        public async Task<ActionResult> GetEmployeeByName([FromQuery] string name)
+        {
+            try
+            {
+                var employee = await getEmployeeByNameCommand.GetEmployeesAsync(name);
+                return !employee.IsNullOrEmpty() ? Ok(employee) : NoContent();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in GetEmployee");
+                return BadRequest();
+            }
+        }
+
         [HttpGet("{id}")]
         public async Task<ActionResult> GetEmployee(Guid id)
         {
@@ -116,8 +139,8 @@
         {
             try
             {
-                var employees = await _getEmployeeQuery.GetEmployeesAsync(pageNumber, pageSize);
-                return employees.Any() ? Ok(employees) : NotFound("No employees found.");
+                var (employees, pagination) = await _getEmployeeQuery.GetEmployeesAsync(pageNumber, pageSize);
+                return employees.Any() ? Ok(new { employees = employees, pagination = pagination }) : NoContent();
             }
             catch (Exception ex)
             {
@@ -132,11 +155,11 @@
         /// <param name="id">The id<see cref="Guid"/></param>
         /// <returns>The <see cref="Task{ActionResult}"/></returns>
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteEmployee(Guid id)
+        public async Task<ActionResult> DeleteEmployee(string id)
         {
             try
             {
-                var result = await _deleteEmployeeCommand.Execute(id);
+                var result = await _deleteEmployeeCommand.Execute(Guid.Parse(id));
                 return result ? NoContent() : NotFound("Employee not found.");
             }
             catch (Exception ex)

@@ -1,5 +1,6 @@
 ﻿using HRSystem.Application.DTOs.Employee;
 using HRSystem.Application.Services.IServices;
+using HRSystem.Shard;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -22,7 +23,7 @@ namespace HRSystem.Application.UseCases.Employee
         }
 
         // Method to get a paginated list of employees
-        public Task<IEnumerable<EmployeeDto>> GetEmployeesAsync(int pageNumber, int pageSize)
+        public Task<(IEnumerable<EmployeeDto>, PaginationMetaData)> GetEmployeesAsync(int pageNumber, int pageSize)
         {
             return _employeeService.GetAllEmployiesAsync(pageNumber, pageSize);
         }

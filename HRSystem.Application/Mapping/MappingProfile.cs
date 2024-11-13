@@ -26,6 +26,8 @@ namespace HRSystem.Application.Mapping
             CreateMap<SalaryTiers, SalaryTiersDto>().ReverseMap();
             CreateMap<SalaryTiers, SalaryTiersCreateDto>().ReverseMap();
             CreateMap<SalaryTiers, SalaryTiersUpdateDto>().ReverseMap();
+            CreateMap<SalaryTiersReportResponse, SalaryTiersReport>().ReverseMap();
+            CreateMap<DepartmentSalaryInfo, DepartmentSalaryInfoResponse>().ReverseMap();
 
 
         }

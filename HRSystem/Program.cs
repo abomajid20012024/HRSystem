@@ -4,6 +4,10 @@ using HRSystem.WebAPI.Extensions;
 using Serilog;
 using HRSystem.Application.Mapping;
 using System.Reflection;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using HRSystem.WebAPI.Middlewares;
+using Microsoft.OpenApi.Models;
 
 namespace HRSystem
 {
@@ -31,6 +35,31 @@ namespace HRSystem
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 options.IncludeXmlComments(xmlPath);
+
+                // Add JWT Authentication to Swagger
+                options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
+                    Description = "Please enter JWT token",
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey,
+                    BearerFormat = "JWT",
+                });
+
+                options.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        new string[] { }
+                    }
+                });
             });
 
             // Configure database context with SQL Server
@@ -44,7 +73,24 @@ namespace HRSystem
             builder.Services.AddEmployeeServices();
             builder.Services.AddDepartmentServices();
             builder.Services.AddSalaryTiersServices();
-
+            builder.Services.AddAuthentication().AddJwtBearer(option =>
+                                                  option.TokenValidationParameters = new()
+                                                  {
+                                                      ValidIssuer = builder.Configuration["Authentication:Issuer"],
+                                                      ValidAudience = builder.Configuration["Authentication:Audience"],
+                                                      IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration["Authentication:SecretKey"])),
+                                                      ValidateAudience = true,
+                                                      ValidateIssuer = true,
+                                                      ValidateIssuerSigningKey = true,
+                                                  });
+            builder.Services.AddCors(option =>
+            {
+                option.AddPolicy("cors-policy", builder => builder
+                                                    .WithOrigins("http://localhost:4200")
+                                                    .AllowAnyMethod()
+                                                    .AllowAnyHeader()
+                                                    .AllowCredentials());
+            });
             var app = builder.Build();
 
             // Configure the HTTP request pipeline
@@ -56,7 +102,9 @@ namespace HRSystem
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "HRSystem API v1");
                 });
             }
-
+            app.UseAuthentication();//here complate Authentication
+            app.UseMiddleware<EmployeeNameValidationMiddleware>();
+            app.UseCors("cors-policy");
             app.UseHttpsRedirection();
             app.UseAuthorization();
             app.MapControllers();

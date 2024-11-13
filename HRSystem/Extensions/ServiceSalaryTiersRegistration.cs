@@ -4,6 +4,7 @@ using HRSystem.Application.Services.IServices;
 using HRSystem.Application.Services;
 using HRSystem.Infrastructure.Repositories;
 using HRSystem.Application.UseCases.Employee;
+using HRSystem.Infrastructure.Repositories.IRepository;
 
 namespace HRSystem.WebAPI.Extensions
 {

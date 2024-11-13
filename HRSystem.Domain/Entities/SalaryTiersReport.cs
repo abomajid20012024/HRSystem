@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace HRSystem.Application.DTOs.SalaryTiers
+namespace HRSystem.Domain.Entities
 {
-    public class SalaryTiersReportResponse
+    public class SalaryTiersReport
     {
-        // اسم الفئة
         public string TierName { get; set; }
 
         // الراتب الأساسي للفئة
@@ -21,11 +23,11 @@ namespace HRSystem.Application.DTOs.SalaryTiers
         public float TotalSalary { get; set; }
 
         // قائمة الأقسام مع مجموع الرواتب في كل قسم
-        public List<DepartmentSalaryInfoResponse> DepartmentTotalSalaries { get; set; } = new List<DepartmentSalaryInfoResponse>();
+        public List<DepartmentSalaryInfo> DepartmentTotalSalaries { get; set; } = new List<DepartmentSalaryInfo>();
     }
 
     // كائن فرعي يمثل مجموع الرواتب في القسم
-    public class DepartmentSalaryInfoResponse
+    public class DepartmentSalaryInfo
     {
         // اسم القسم
         public string DepartmentName { get; set; }
@@ -34,3 +36,4 @@ namespace HRSystem.Application.DTOs.SalaryTiers
         public float TotalDepartmentSalary { get; set; }
     }
 }
+

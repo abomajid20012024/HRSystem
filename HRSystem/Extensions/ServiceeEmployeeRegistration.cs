@@ -14,6 +14,7 @@ namespace HRSystem.WebAPI.Extensions
             services.AddScoped<UpdateEmployeeCommand>();
             services.AddScoped<GetEmployeeQuery>();
             services.AddScoped<DeleteEmployeeCommand>();
+            services.AddScoped<GetEmployeeByNameCommand>();
             services.AddScoped<IEmployeeRepository, EmployeeRepository>();
             services.AddScoped<IEmployeeService, EmployeeService>();
 

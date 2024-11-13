@@ -1,7 +1,7 @@
-﻿using HRSystem.Application.DTOs.SalaryTiers;
-using HRSystem.Application.IRepository;
+﻿using HRSystem.Application.IRepository;
 using HRSystem.Domain.Entities;
 using HRSystem.Infrastructure.Data;
+using HRSystem.Infrastructure.Repositories.IRepository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
@@ -20,6 +20,34 @@ namespace HRSystem.Infrastructure.Repositories
         {
             _context = context;
             _logger = logger;
+        }
+
+        public async Task<bool> AddSalaryTierAsync(SalaryTiers salaryTier)
+        {
+            try
+            {
+                await _context.SalaryTiers.AddAsync(salaryTier);
+                return await _context.SaveChangesAsync() > 0;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical(ex, "Error occurred in SalaryTiersRepository in AddSalaryTierAsync method");
+                return false;
+            }
+        }
+
+        public async Task<bool> UpdateSalaryTierAsync(SalaryTiers salaryTier)
+        {
+            try
+            {
+                _context.SalaryTiers.Update(salaryTier);
+                return await _context.SaveChangesAsync() > 0;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical(ex, "Error occurred in SalaryTiersRepository in UpdateSalaryTierAsync method");
+                return false;
+            }
         }
 
         public async Task<IEnumerable<SalaryTiers>> GetAllSalaryTiersAsync(int pageNumber, int pageSize)
@@ -54,34 +82,45 @@ namespace HRSystem.Infrastructure.Repositories
             }
         }
 
-        public async Task<bool> AddSalaryTierAsync(SalaryTiers salaryTier)
+        public async Task<IEnumerable<SalaryTiersReport>> GetReportSalaryTierAsync()
         {
             try
             {
-                await _context.SalaryTiers.AddAsync(salaryTier);
-                return await _context.SaveChangesAsync() > 0;
+                //edit this report/*
+                //unit test
+                // 
+                //*/
+                var salaryTiers = await _context.SalaryTiers
+                    .Include(st => st.Employees)
+                        .ThenInclude(e => e.Department)
+                    .ToListAsync();
+
+                var salaryTiersReports = salaryTiers.Select(st => new SalaryTiersReport
+                {
+                    TierName = st.TierName,
+                    BaseSalary = st.BaseSalary,
+                    Bonus = st.Bonus,
+                    EmployeeCount = st.Employees.Count,
+                    TotalSalary = st.Employees.Sum(e => st.BaseSalary + st.Bonus),
+
+                    DepartmentTotalSalaries = st.Employees
+                        .GroupBy(e => e.Department.DepartmentId)
+                        .Select(g => new DepartmentSalaryInfo
+                        {
+                            DepartmentName = g.First().Department.DepartmetnName,
+                            TotalDepartmentSalary = g.Sum(e => st.BaseSalary + st.Bonus)
+                        })
+                        .ToList()
+                }).ToList();
+
+                return salaryTiersReports;
             }
             catch (Exception ex)
             {
-                _logger.LogCritical(ex, "Error occurred in SalaryTiersRepository in AddSalaryTierAsync method");
-                return false;
+                _logger.LogCritical(ex, "Error occurred in SalaryTiersRepository in GetReportSalaryTierAsync method");
+                return Enumerable.Empty<SalaryTiersReport>();
             }
         }
-
-        public async Task<bool> UpdateSalaryTierAsync(SalaryTiers salaryTier)
-        {
-            try
-            {
-                _context.SalaryTiers.Update(salaryTier);
-                return await _context.SaveChangesAsync() > 0;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogCritical(ex, "Error occurred in SalaryTiersRepository in UpdateSalaryTierAsync method");
-                return false;
-            }
-        }
-
         public async Task<bool> DeleteSalaryTierAsync(Guid id)
         {
             try
@@ -115,43 +154,6 @@ namespace HRSystem.Infrastructure.Repositories
                 return false;
             }
         }
-
-        public async Task<IEnumerable<SalaryTiersReportResponse>> GetReportSalaryTierAsync()
-        {
-            try
-            {
-                var salaryTiers = await _context.SalaryTiers
-                    .Include(st => st.Employees)
-                        .ThenInclude(e => e.Department)
-                    .ToListAsync();
-
-                var salaryTiersReports = salaryTiers.Select(st => new SalaryTiersReportResponse
-                {
-                    TierName = st.TierName,
-                    BaseSalary = st.BaseSalary,
-                    Bonus = st.Bonus,
-                    EmployeeCount = st.Employees.Count,
-                    TotalSalary = st.Employees.Sum(e => st.BaseSalary + st.Bonus),
-
-                    DepartmentTotalSalaries = st.Employees
-                        .GroupBy(e => e.Department.DepartmentId)  
-                        .Select(g => new DepartmentSalaryInfo
-                        {
-                            DepartmentName = g.First().Department.DepartmetnName,
-                            TotalDepartmentSalary = g.Sum(e => st.BaseSalary + st.Bonus)
-                        })
-                        .ToList()
-                }).ToList();
-
-                return salaryTiersReports;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogCritical(ex, "Error occurred in SalaryTiersRepository in GetReportSalaryTierAsync method");
-                return Enumerable.Empty<SalaryTiersReportResponse>();
-            }
-        }
-
     }
 
 }

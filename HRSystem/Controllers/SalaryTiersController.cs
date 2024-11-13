@@ -3,6 +3,7 @@
     using HRSystem.Application.DTOs.SalaryTiers;
     using HRSystem.Application.UseCases.Employee;
     using HRSystem.Application.UseCases.SalaryTiers;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
 
     /// <summary>
@@ -10,6 +11,7 @@
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "SuperAdmin")]
     public class SalaryTiersController : ControllerBase
     {
         /// <summary>

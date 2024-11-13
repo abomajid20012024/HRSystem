@@ -1,6 +1,7 @@
 ﻿using HRSystem.Application.IRepository;
 using HRSystem.Domain.Entities;
 using HRSystem.Infrastructure.Data;
+using HRSystem.Shard;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
@@ -21,20 +22,23 @@ namespace HRSystem.Infrastructure.Repositories
             _logger = logger;
         }
 
-        public async Task<IEnumerable<Employee>> GetAllEmployeesAsync(int pageNumber, int pageSize)
+        public async Task<(IEnumerable<Employee?>, PaginationMetaData?)> GetAllEmployeesAsync(int pageNumber, int pageSize)
         {
             try
             {
-                return await _context.Employees
+                var countItem = await _context.Employees.CountAsync(e => e.IsActive);
+                var paginationMetDate = new PaginationMetaData(countItem, pageSize, pageNumber);
+                return (await _context.Employees
                     .Skip(pageSize * (pageNumber - 1))
                     .Take(pageSize)
+                    .Where(e => e.IsActive)
                     .OrderBy(e => e.LastName)
-                    .ToListAsync();
+                    .ToListAsync(), paginationMetDate);
             }
             catch (Exception ex)
             {
                 _logger.LogCritical(ex, "Error occurred in EmployeeRepository in GetAllEmployeesAsync method");
-                return Enumerable.Empty<Employee>();
+                return (Enumerable.Empty<Employee>(), null);
             }
         }
 
@@ -116,6 +120,22 @@ namespace HRSystem.Infrastructure.Repositories
             {
                 _logger.LogCritical(ex, "Error occurred in EmployeeRepository in DeleteEmployeeSoftAsync method");
                 return false;
+            }
+        }
+
+        public async Task<List<Employee>> GetEmployeeByNameAsync(string name)
+        {
+            try
+            {
+                var employies = await _context.Employees
+                                             .Where(e => (e.FirstName + " " + e.LastName).Contains(name))
+                                             .ToListAsync();
+                return employies;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical(ex, "error ocurs in getEMployeeByName");
+                return new List<Employee>() { };
             }
         }
     }

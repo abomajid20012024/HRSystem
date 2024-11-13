@@ -28,6 +28,7 @@ namespace HRSystem.Infrastructure.Data
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             // Method intentionally left empty.
+
         }
     }
 }

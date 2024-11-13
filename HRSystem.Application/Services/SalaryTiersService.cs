@@ -3,6 +3,7 @@ using HRSystem.Application.DTOs.SalaryTiers;
 using HRSystem.Application.IRepository;
 using HRSystem.Application.Services.IServices;
 using HRSystem.Domain.Entities;
+using HRSystem.Infrastructure.Repositories.IRepository;
 using Microsoft.Extensions.Logging;
 
 namespace HRSystem.Application.Services
@@ -122,7 +123,8 @@ namespace HRSystem.Application.Services
         {
             try
             {
-                return await _salaryTiersRepository.GetReportSalaryTierAsync();
+                var item = _mapper.Map<IEnumerable<SalaryTiersReportResponse>>(await _salaryTiersRepository.GetReportSalaryTierAsync());
+                return item;
             }
             catch (Exception ex)
             {

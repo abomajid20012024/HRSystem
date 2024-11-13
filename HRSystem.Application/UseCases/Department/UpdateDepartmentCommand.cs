@@ -1,13 +1,7 @@
 ﻿using AutoMapper;
 using HRSystem.Application.DTOs.Department;
 using HRSystem.Application.Services.IServices;
-using HRSystem.Domain.Entities;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HRSystem.Application.UseCases.Department
 {
@@ -28,6 +22,7 @@ namespace HRSystem.Application.UseCases.Department
             this.logger = logger;
             this.mapper = mapper;
         }
+
         public async Task<bool> Excute(DepartmentUpdateDto departmentUpdateDto)
         {
             try
@@ -35,7 +30,6 @@ namespace HRSystem.Application.UseCases.Department
                 if (departmentUpdateDto == null)
                 {
                     return await Task.FromResult(false);
-
                 }
                 return await departmentService.UpdateDepartment(departmentUpdateDto);
             }
